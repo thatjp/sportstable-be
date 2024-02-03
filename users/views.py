@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -11,7 +11,6 @@ from .serializers import MyTokenObtainPairSerializer, RegisterSerializer, Profil
 from .models import CustomUser
 
 
-# Login User
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
@@ -25,11 +24,11 @@ class RegisterView(generics.CreateAPIView):
 
 # Login
 
+
 class LoginView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        print(request.data)
         username = request.data.get('email')
         password = request.data.get('password')
         user = authenticate(username=username, password=password)
@@ -37,7 +36,22 @@ class LoginView(generics.CreateAPIView):
         return JsonResponse({'refresh': str(refresh), 'access': str(refresh.access_token)})
 
 
+class LogoutView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response({'success': 'User has been successfully logged out'}, status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
 # api/profile  and api/profile/update
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getProfile(request):
@@ -54,4 +68,3 @@ def updateProfile(request):
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
-
