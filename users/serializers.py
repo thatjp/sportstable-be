@@ -36,7 +36,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
-        return str(token.access_token)
+        return {
+            'refresh': str(token),
+            'access': str(token.access_token),
+        }
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
