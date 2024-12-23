@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
+    'django_elasticsearch_dsl',
     'users',
-    'corsheaders'
+    'corsheaders',
+    'teams'
 ]
 
 SIMPLE_JWT = {
@@ -161,6 +163,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ELASTICSEARCH_DSL = {
+    "default": {
+        "hosts": ["http://elasticsearch:9200"],
+    },
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
