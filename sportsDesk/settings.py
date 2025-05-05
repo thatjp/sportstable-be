@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django_elasticsearch_dsl',
     'users',
     'corsheaders',
-    'teams'
+    'teams',
+    'mlb'
 ]
 
 SIMPLE_JWT = {

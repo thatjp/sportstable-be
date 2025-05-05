@@ -1,14 +1,25 @@
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.cache import cache_page
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from nba_api.stats.static import teams
 from nba_api.stats.endpoints import teamdetails, leaguegamefinder
 from nba_api.stats.static import teams
 
-# Create your views here.
+
+@cache_page(60 * 15)
+@api_view(["GET"])
+def get_teams_list(request):
+
+  try:
+    nba_teams = teams.get_teams()
+    return Response({"teams": nba_teams}, status=status.HTTP_200_OK)
+  except Exception as e:
+      return Response(status=status.HTTP_400_BAD_REQUEST)
+   
 
 class NBATeamsView(APIView): 
     permission_classes = (IsAuthenticated,)
